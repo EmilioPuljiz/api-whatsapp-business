@@ -9,13 +9,13 @@ class WhatsappNotification extends Model
 {
     use HasFactory;
 
-    protected $table = "whatsapp_notifications";
+    protected $table = 'whatsapp_notifications';
 
     protected $fillable = [
         'id',
         'template',
         'title',
         'description',
-        'is_active'
+        'is_active',
     ];
 }

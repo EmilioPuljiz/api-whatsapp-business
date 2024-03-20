@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace EmilioPuljiz\ApiWhatsappBusiness\Commands;
 
 use Illuminate\Console\Command;
 

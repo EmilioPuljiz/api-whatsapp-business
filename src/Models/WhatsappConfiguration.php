@@ -9,7 +9,7 @@ class WhatsappConfiguration extends Model
 {
     use HasFactory;
 
-    protected $table = "whatsapp_configurations";
+    protected $table = 'whatsapp_configurations';
 
     protected $fillable = [
         'id',

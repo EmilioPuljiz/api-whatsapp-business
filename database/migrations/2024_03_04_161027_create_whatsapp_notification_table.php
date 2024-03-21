@@ -28,4 +28,4 @@ class CreateWhatsappNotificationsTable extends Migration
     {
         Schema::dropIfExists('whatsapp_notification');
     }
-};
+}

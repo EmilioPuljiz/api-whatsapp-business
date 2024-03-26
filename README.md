@@ -1,92 +1,140 @@
-# :package_description
+# api-whatsapp-business
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/emiliopuljiz/api-whatsapp-business.svg?style=flat-square)](https://packagist.org/packages/emiliopuljiz/api-whatsapp-business)
+[![Total Downloads](https://img.shields.io/packagist/dt/emiliopuljiz/api-whatsapp-business.svg?style=flat-square)](https://packagist.org/packages/emiliopuljiz/api-whatsapp-business)
+
 ---
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+api-whatsapp-business is a package for Laravel that allows you to send WhatsApp templates dynamically to specified phone numbers. With this package, you can send templates regardless of the number of variables you have in the created template, making it easier to personalize the message for each recipient regardless of the complexity of the template.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require emiliopuljiz/api-whatsapp-business
 ```
 
 You can publish and run the migrations with:
 
 ```bash
 php artisan vendor:publish --tag=":package_slug-migrations"
+
 php artisan migrate
 ```
 
-You can publish the config file with:
+## 🚀 **Initial Setup:**
 
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
-```
+1. **Register on Facebook Developers:**
 
-This is the contents of the published config file:
+    - Go to [Facebook Developers](https://developers.facebook.com/).
+    - Obtain the following data:
+        - App Identifier: XXXXXXXXXXXXXXX (Obtained once you enter the app in the upper left part of the menu).
+        - Phone Number Identifier: XXXXXXXXXXXXXXX (Obtained in the left menu WhatsApp > API Settings > below the selected phone number for sending the test).
+        - App Secret Key: XXXXXXXXXXXXXXXX (Obtained in the left side menu App Settings > Basic).
 
-```php
-return [
-];
-```
+2. **Database Configuration:**
+    - Insert the `whatsapp_configurations` table into your database using the data obtained above.
 
-Optionally, you can publish the views using
+📝 **Creating WhatsApp Templates:**
 
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
+-   Create a template in WhatsApp, for example:
+    -   **Name:** new_user
+    -   **Type:** Utility (if it's for clients or users) / Marketing (if it's for other purposes)
+-   Example template body:
+    Header: (Welcome to My Application)
+
+    Body:
+    Hello {{1}}, here is your access information:
+
+    User: {{2}}
+    Password: {{3}}
+    Access My Application: {{4}}
+
+    Footer: (Greetings from the My Application team)
+
+This process will allow you to configure your package to send dynamic and personalized WhatsApp templates to your recipients.
 
 ## Usage
 
+-   You should create a job. Then dispatch the work from the place where you will use it in your app
+-   Keep in mind that within the class you must make the call to use SendWhatsapp (The trait that we have in the package)
+
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use EmilioPuljiz\ApiWhatsappBusiness\Traits\SendWhatsapp;
+
+class SendWhatsAppJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, SendWhatsapp;
+
+    protected $phoneNumber;
+    protected $templateName;
+    protected $variables;
+
+    /**
+     * Create a new job instance.
+     *
+     * @param string $phoneNumber
+     * @param string $templateName
+     * @param array $variables
+     * @return void
+     */
+    public function __construct($phoneNumber, $templateName, $variables)
+    {
+        $this->phoneNumber = $phoneNumber;
+        $this->templateName = $templateName;
+        $this->variables = $variables;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        // Call the SendWhatsappNotification method from the trait
+        $this->SendWhatsappNotification(
+            $this->phoneNumber,
+            $this->templateName,
+            $this->variables
+        );
+    }
+}
+
 ```
 
-## Testing
+-   Controller usage
 
-```bash
-composer test
+```php
+use App\Jobs\SendWhatsAppJob;
+
+// Somewhere in your code...
+$phoneNumber = '5493624380272';
+$templateName = 'new_user';
+$variables = ['Emilio', '+5493624380272', 'Emilio*1234', 'myapp.com'];
+
+// Call Job to send WhatsApp message
+SendWhatsAppJob::dispatch($phoneNumber, $templateName, $variables);
+
 ```
 
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
-- [All Contributors](../../contributors)
+-   [emiliopuljiz](https://github.com/EmilioPuljiz)
 
 ## License
 

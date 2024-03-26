@@ -22,9 +22,6 @@ class CreateWhatsappConfigurationsTable extends Migration
             $table->dateTime('expires_in');
             $table->string('phone_number_id');
 
-            $table->unsignedBigInteger('configuration_id');
-            $table->foreign('configuration_id')->references('id')->on('configurations');
-
             $table->softDeletes();
             $table->timestamps();
         });

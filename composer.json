@@ -1,4 +1,5 @@
 {
+    "version": "1.0.1",
     "name": "emiliopuljiz/api-whatsapp-business",
     "description": "With this package you can create WhatsApp Business templates, start conversations through these templates. We are also going to have a panel to be able to receive and send messages with clients that we start conversations with.",
     "keywords": [
@@ -29,7 +30,8 @@
     "autoload": {
         "psr-4": {
             "EmilioPuljiz\\ApiWhatsappBusiness\\": "src/",
-            "EmilioPuljiz\\ApiWhatsappBusiness\\Database\\Factories\\": "database/factories/"
+            "EmilioPuljiz\\ApiWhatsappBusiness\\Database\\Factories\\": "database/factories/",
+            "EmilioPuljiz\\ApiWhatsappBusiness\\Database\\Migrations\\": "database/migrations/"
         }
     },
     "autoload-dev": {

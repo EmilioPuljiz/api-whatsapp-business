@@ -6,9 +6,12 @@ use DateTime;
 use EmilioPuljiz\ApiWhatsappBusiness\Models\WhatsappConfiguration;
 use Exception;
 use GuzzleHttp\Client;
+use EmilioPuljiz\ApiWhatsappBusiness\Traits\UpdateBearer;
 
-class SendWhatsappNotification
+trait SendWhatsapp
 {
+    use UpdateBearer;
+
     public function SendWhatsappNotification($phoneNumber, $template, $vars)
     {
         try {
@@ -20,7 +23,7 @@ class SendWhatsappNotification
                 $expires_in = new DateTime($whatsappConfiguration->expires_in);
 
                 if ($now > $expires_in) {
-                    $updatedToken = UpdateBearerWhatsapp::UpdateBearerWhatsapp($whatsappConfiguration);
+                    $updatedToken = $this->UpdateBearerWhatsapp($whatsappConfiguration);
                     $whatsappConfiguration->access_token = $updatedToken->access_token;
                     $whatsappConfiguration->expires_in = date('Y-m-d H:i:s', (strtotime(date($now->format('Y-m-d H:i:s'))) + (int) $updatedToken->expires_in));
                     $whatsappConfiguration->save();
@@ -57,11 +60,11 @@ class SendWhatsappNotification
 
                 $json_data = json_encode($data);
 
-                $url = 'https://graph.facebook.com/v18.0/'.$whatsappConfiguration->phone_number_id.'/messages';
+                $url = 'https://graph.facebook.com/v18.0/' . $whatsappConfiguration->phone_number_id . '/messages';
 
                 $response = $client->request('POST', $url, [
                     'headers' => [
-                        'Authorization' => 'Bearer '.$whatsappConfiguration->access_token,
+                        'Authorization' => 'Bearer ' . $whatsappConfiguration->access_token,
                         'Content-Type' => 'application/json',
                     ],
                     'body' => $json_data,

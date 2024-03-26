@@ -2,6 +2,6 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
-## Release Test - 2024-03-20
+## Release - 2024-03-26
 
-A test release is created
+Version 1.1.0

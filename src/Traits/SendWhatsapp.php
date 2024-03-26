@@ -6,7 +6,6 @@ use DateTime;
 use EmilioPuljiz\ApiWhatsappBusiness\Models\WhatsappConfiguration;
 use Exception;
 use GuzzleHttp\Client;
-use EmilioPuljiz\ApiWhatsappBusiness\Traits\UpdateBearer;
 
 trait SendWhatsapp
 {
@@ -60,11 +59,11 @@ trait SendWhatsapp
 
                 $json_data = json_encode($data);
 
-                $url = 'https://graph.facebook.com/v18.0/' . $whatsappConfiguration->phone_number_id . '/messages';
+                $url = 'https://graph.facebook.com/v18.0/'.$whatsappConfiguration->phone_number_id.'/messages';
 
                 $response = $client->request('POST', $url, [
                     'headers' => [
-                        'Authorization' => 'Bearer ' . $whatsappConfiguration->access_token,
+                        'Authorization' => 'Bearer '.$whatsappConfiguration->access_token,
                         'Content-Type' => 'application/json',
                     ],
                     'body' => $json_data,

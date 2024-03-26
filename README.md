@@ -18,7 +18,7 @@ composer require emiliopuljiz/api-whatsapp-business
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
+php artisan vendor:publish --tag="emiliopuljiz-api-whatsapp-business-migrations"
 
 php artisan migrate
 ```

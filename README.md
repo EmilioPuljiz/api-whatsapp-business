@@ -121,7 +121,7 @@ use App\Jobs\SendWhatsAppJob;
 // Somewhere in your code...
 $phoneNumber = '5493624380272';
 $templateName = 'new_user';
-$variables = ['Emilio', '+5493624380272', 'Emilio*1234', 'myapp.com'];
+$variables = ['Emilio', 'emiliopuljiz@gmail.com', 'Emilio*1234', 'myapp.com'];
 
 // Call Job to send WhatsApp message
 SendWhatsAppJob::dispatch($phoneNumber, $templateName, $variables);
